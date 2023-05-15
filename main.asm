@@ -1,7 +1,7 @@
 start:
 
 generateNumber:
-jmp four
+jmp six
 
 off:
 mov p0, #0ffh
@@ -39,7 +39,7 @@ two:
 mov p0, #11000011b
 mov p1, #10110101b
 acall off
-mov p0, #11101111b
+mov p0, #11111011b
 mov p1, #11110001b
 acall off
 mov p0, #11011111b
@@ -71,4 +71,33 @@ mov p0, #11111011b
 mov p1, #10000001b
 acall off
 acall delay
-jmp four
+;jmp four
+jmp generateNumber
+
+five:
+mov p0, #11000011b
+mov p1, #10110101b
+acall off
+mov p0, #11011111b
+mov p1, #11110001b
+acall off
+mov p0, #11111011b
+mov p1, #10001111b
+acall off
+acall delay
+;jmp five
+jmp generateNumber
+
+six:
+mov p0, #11000011b
+mov p1, #10110101b
+acall off
+mov p0, #11011111b
+mov p1, #10000001b
+acall off
+mov p0, #11111011b
+mov p1, #10001111b
+acall off
+acall delay
+;jmp five
+jmp generateNumber
