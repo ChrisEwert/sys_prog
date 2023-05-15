@@ -1,113 +1,164 @@
 main                                                                                                                    PAGE 1
-                         1     start:
+  0020                   1     ZUF8R EQU 0x20
                          2
-                         3     generateNumber:
-0000 02009F              4     jmp six
-                         5
-                         6     off:
-0003 7580FF              7     mov p0, #0ffh
-0006 7590FF              8     mov p1, #0ffh
-0009 22                  9     ret
+0000 7400                3     mov A, #00h
+                         4
+                         5     start:
+                         6     ; schauen ob Button gedrückt
+                         7     ; wenn ja, neue Zahl
+0002 30A025              8     jnb p2.0, generateNumber
+0005 60FB                9     jz start
                         10
-                        11     delay:
-000A 7A0F               12     mov r2, #0fh
-000C DAFE               13     loop: djnz r2, loop
-000E 22                 14     ret
+                        11     handleResult:
+                        12     ; aktuellen Akku-Inhalt anzeigen
+0007 B40103             13     cjne A, #01b, biggerThanOne
+000A 020063             14     jmp one
                         15
-                        16     zero:
-000F 7580DB             17     mov p0, #11011011b
-0012 7590C3             18     mov p1, #11000011b
-0015 1103               19     acall off
-0017 7580E7             20     mov p0, #11100111b
-001A 7590BD             21     mov p1, #10111101b
-001D 1103               22     acall off
-001F 110A               23     acall delay
-                        24     ;jmp zero
-0021 80DD               25     jmp generateNumber
-                        26
-                        27     one:
-0023 7580E7             28     mov p0, #11100111b
-0026 759081             29     mov p1, #10000001b
-0029 1103               30     acall off
-002B 7580DB             31     mov p0, #11011011b
-002E 7590BD             32     mov p1, #10111101b
-0031 1103               33     acall off
-0033 110A               34     acall delay
-                        35     ;jmp one
-0035 80C9               36     jmp generateNumber
+                        16     biggerThanOne:
+000D B40203             17     cjne A, #010b, biggerThanTwo
+0010 02007F             18     jmp two
+                        19
+                        20     biggerThanTwo:
+0013 B40303             21     cjne A, #011b, biggerThanThree
+0016 02009B             22     jmp three
+                        23
+                        24     biggerThanThree:
+0019 B40403             25     cjne A, #0100b, biggerThanFour
+001C 0200AF             26     jmp four
+                        27
+                        28     biggerThanFour:
+001F B40303             29     cjne A, #011b, biggerThanFive
+0022 0200CB             30     jmp five
+                        31
+                        32     biggerThanFive:
+0025 0200E7             33     jmp six
+                        34
+                        35     ; schleife
+0028 80D8               36     jmp start
                         37
-                        38     two:
-0037 7580C3             39     mov p0, #11000011b
-003A 7590B5             40     mov p1, #10110101b
-003D 1103               41     acall off
-003F 7580FB             42     mov p0, #11111011b
-0042 7590F1             43     mov p1, #11110001b
-0045 1103               44     acall off
-0047 7580DF             45     mov p0, #11011111b
-004A 75908F             46     mov p1, #10001111b
-004D 1103               47     acall off
-004F 110A               48     acall delay
-                        49     ;jmp two
-0051 80AD               50     jmp generateNumber
-                        51
-                        52     three:
-0053 7580C3             53     mov p0, #11000011b
-0056 7590B5             54     mov p1, #10110101b
-0059 1103               55     acall off
-005B 7580FB             56     mov p0, #11111011b
-005E 759081             57     mov p1, #10000001b
-0061 1103               58     acall off
-0063 110A               59     acall delay
-                        60     ;jmp three
-0065 8099               61     jmp generateNumber
-                        62
-                        63     four:
-0067 7580DF             64     mov p0, #11011111b
-006A 7590E1             65     mov p1, #11100001b
-006D 1103               66     acall off
-006F 7580E7             67     mov p0, #11100111b
-0072 7590EF             68     mov p1, #11101111b
-0075 1103               69     acall off
-0077 7580FB             70     mov p0, #11111011b
-007A 759081             71     mov p1, #10000001b
-007D 1103               72     acall off
-007F 110A               73     acall delay
-                        74     ;jmp four
-0081 0100               75     jmp generateNumber
+                        38     generateNumber:
+002A E520               39     ZUFALL: mov     A, ZUF8R   ; initialisiere A mit ZUF8R
+002C 7003               40             jnz     ZUB
+002E F4                 41             cpl     A
+002F F520               42             mov     ZUF8R, A
+0031 54B8               43     ZUB:    anl     a, #10111000b
+0033 A2D0               44             mov     C, P
+0035 E520               45             mov     A, ZUF8R
+0037 33                 46             rlc     A
+0038 F520               47             mov     ZUF8R, A
+                        48
+                        49     ; modulo 6
+003A 75F006             50     mov B, #0110b
+003D 84                 51     div AB
+003E E5F0               52     mov A, B
+0040 04                 53     inc A
+0041 80C4               54     jmp handleResult
+                        55
+                        56     off:
+0043 7580FF             57     mov p0, #0ffh
+0046 7590FF             58     mov p1, #0ffh
+0049 22                 59     ret
+                        60
+                        61     delay:
+004A 7A0F               62     mov r2, #0fh
+004C DAFE               63     loop: djnz r2, loop
+004E 22                 64     ret
+                        65
+                        66     zero:
+004F 7580DB             67     mov p0, #11011011b
+0052 7590C3             68     mov p1, #11000011b
+0055 1143               69     acall off
+0057 7580E7             70     mov p0, #11100111b
+005A 7590BD             71     mov p1, #10111101b
+005D 1143               72     acall off
+005F 114A               73     acall delay
+                        74     ;jmp zero
+0061 809F               75     jmp start
                         76
-                        77     five:
-0083 7580C3             78     mov p0, #11000011b
-0086 7590B5             79     mov p1, #10110101b
-0089 1103               80     acall off
-008B 7580DF             81     mov p0, #11011111b
-008E 7590F1             82     mov p1, #11110001b
-0091 1103               83     acall off
-0093 7580FB             84     mov p0, #11111011b
-0096 75908F             85     mov p1, #10001111b
-0099 1103               86     acall off
-009B 110A               87     acall delay
-                        88     ;jmp five
-009D 0100               89     jmp generateNumber
+                        77     one:
+0063 7580E7             78     mov p0, #11100111b
+0066 759081             79     mov p1, #10000001b
+0069 1143               80     acall off
+006B 7580DF             81     mov p0, #11011111b
+006E 7590FD             82     mov p1, #11111101b
+0071 1143               83     acall off
+0073 7580DB             84     mov p0, #11011011b
+0076 7590BF             85     mov p1, #10111111b
+0079 1143               86     acall off
+007B 114A               87     acall delay
+                        88     ;jmp one
+007D 8083               89     jmp start
                         90
-                        91     six:
-009F 7580C3             92     mov p0, #11000011b
-00A2 7590B5             93     mov p1, #10110101b
-00A5 1103               94     acall off
-00A7 7580DF             95     mov p0, #11011111b
-00AA 759081             96     mov p1, #10000001b
-00AD 1103               97     acall off
-00AF 7580FB             98     mov p0, #11111011b
-00B2 75908F             99     mov p1, #10001111b
-00B5 1103              100     acall off
-00B7 110A              101     acall delay
-                       102     ;jmp five
-00B9 0100              103     jmp generateNumber
-****WARNING:Missing`END'directive
-ASSEMBLY COMPLETE, NO ERRORS FOUND, 1 WARNING
+                        91     two:
+007F 7580C3             92     mov p0, #11000011b
+0082 7590B5             93     mov p1, #10110101b
+0085 1143               94     acall off
+0087 7580FB             95     mov p0, #11111011b
+008A 7590F1             96     mov p1, #11110001b
+008D 1143               97     acall off
+008F 7580DF             98     mov p0, #11011111b
+0092 75908F             99     mov p1, #10001111b
+0095 1143              100     acall off
+0097 114A              101     acall delay
+                       102     ;jmp two
+0099 0102              103     jmp start
+                       104
+                       105     three:
+009B 7580C3            106     mov p0, #11000011b
+009E 7590B5            107     mov p1, #10110101b
+00A1 1143              108     acall off
+00A3 7580FB            109     mov p0, #11111011b
+00A6 759081            110     mov p1, #10000001b
+00A9 1143              111     acall off
+00AB 114A              112     acall delay
+                       113     ;jmp three
+00AD 0102              114     jmp start
+                       115
+                       116     four:
+00AF 7580DF            117     mov p0, #11011111b
+00B2 7590E1            118     mov p1, #11100001b
+00B5 1143              119     acall off
+00B7 7580E7            120     mov p0, #11100111b
+00BA 7590EF            121     mov p1, #11101111b
+00BD 1143              122     acall off
+00BF 7580FB            123     mov p0, #11111011b
+00C2 759081            124     mov p1, #10000001b
+00C5 1143              125     acall off
+00C7 114A              126     acall delay
+                       127     ;jmp four
+00C9 0102              128     jmp start
+                       129
+                       130     five:
+00CB 7580C3            131     mov p0, #11000011b
+00CE 7590B5            132     mov p1, #10110101b
+00D1 1143              133     acall off
+00D3 7580DF            134     mov p0, #11011111b
+00D6 7590F1            135     mov p1, #11110001b
+00D9 1143              136     acall off
+00DB 7580FB            137     mov p0, #11111011b
+00DE 75908F            138     mov p1, #10001111b
+00E1 1143              139     acall off
+00E3 114A              140     acall delay
+                       141     ;jmp five
+00E5 0102              142     jmp start
+                       143
+                       144     six:
+00E7 7580C3            145     mov p0, #11000011b
+00EA 7590B5            146     mov p1, #10110101b
+00ED 1143              147     acall off
+00EF 7580DF            148     mov p0, #11011111b
+00F2 759081            149     mov p1, #10000001b
+00F5 1143              150     acall off
+00F7 7580FB            151     mov p0, #11111011b
+00FA 75908F            152     mov p1, #10001111b
+00FD 1143              153     acall off
+00FF 114A              154     acall delay
+                       155     ;jmp five
+0101 0102              156     jmp start
+                       157
+                       158     end
+ASSEMBLY COMPLETE, NO ERRORS FOUND, NO WARNINGS
 
-
-ERROR SUMMARY:
-Line 103, WARNING:Missing`END'directive
 
 SYMBOL TABLE:
 ??MCU_8051_IDE . . . . . . . . . . .  N  NUMB  8051H  NOT USED
@@ -122,9 +173,14 @@ ADDH . . . . . . . . . . . . . . . .  D  ADDR  00F5H  NOT USED
 ADDL . . . . . . . . . . . . . . . .  D  ADDR  00F4H  NOT USED
 AUXR . . . . . . . . . . . . . . . .  D  ADDR  008EH  NOT USED
 AUXR1. . . . . . . . . . . . . . . .  D  ADDR  00A2H  NOT USED
-B. . . . . . . . . . . . . . . . . .  D  ADDR  00F0H  NOT USED
+B. . . . . . . . . . . . . . . . . .  D  ADDR  00F0H
 BDRCON . . . . . . . . . . . . . . .  D  ADDR  009BH  NOT USED
 BDRCON_1 . . . . . . . . . . . . . .  D  ADDR  009CH  NOT USED
+BIGGERTHANFIVE . . . . . . . . . . .  C  ADDR  0025H
+BIGGERTHANFOUR . . . . . . . . . . .  C  ADDR  001FH
+BIGGERTHANONE. . . . . . . . . . . .  C  ADDR  000DH
+BIGGERTHANTHREE. . . . . . . . . . .  C  ADDR  0019H
+BIGGERTHANTWO. . . . . . . . . . . .  C  ADDR  0013H
 BRL. . . . . . . . . . . . . . . . .  D  ADDR  009AH  NOT USED
 CCAP0H . . . . . . . . . . . . . . .  D  ADDR  00FAH  NOT USED
 CCAP0L . . . . . . . . . . . . . . .  D  ADDR  00EAH  NOT USED
@@ -163,7 +219,7 @@ CPRL2. . . . . . . . . . . . . . . .  B  ADDR  00C8H  NOT USED
 CR . . . . . . . . . . . . . . . . .  B  ADDR  00DEH  NOT USED
 CT2. . . . . . . . . . . . . . . . .  B  ADDR  00C9H  NOT USED
 CY . . . . . . . . . . . . . . . . .  B  ADDR  00D7H  NOT USED
-DELAY. . . . . . . . . . . . . . . .  C  ADDR  000AH
+DELAY. . . . . . . . . . . . . . . .  C  ADDR  004AH
 DP0H . . . . . . . . . . . . . . . .  D  ADDR  0083H  NOT USED
 DP0L . . . . . . . . . . . . . . . .  D  ADDR  0082H  NOT USED
 DP1H . . . . . . . . . . . . . . . .  D  ADDR  0085H  NOT USED
@@ -185,9 +241,10 @@ EXTI0. . . . . . . . . . . . . . . .  C  ADDR  0003H  NOT USED
 EXTI1. . . . . . . . . . . . . . . .  C  ADDR  0013H  NOT USED
 F0 . . . . . . . . . . . . . . . . .  B  ADDR  00D5H  NOT USED
 FE . . . . . . . . . . . . . . . . .  B  ADDR  009FH  NOT USED
-FIVE . . . . . . . . . . . . . . . .  C  ADDR  0083H  NOT USED
-FOUR . . . . . . . . . . . . . . . .  C  ADDR  0067H  NOT USED
-GENERATENUMBER . . . . . . . . . . .  C  ADDR  0000H
+FIVE . . . . . . . . . . . . . . . .  C  ADDR  00CBH
+FOUR . . . . . . . . . . . . . . . .  C  ADDR  00AFH
+GENERATENUMBER . . . . . . . . . . .  C  ADDR  002AH
+HANDLERESULT . . . . . . . . . . . .  C  ADDR  0007H
 IE . . . . . . . . . . . . . . . . .  D  ADDR  00A8H  NOT USED
 IE0. . . . . . . . . . . . . . . . .  B  ADDR  0089H  NOT USED
 IE1. . . . . . . . . . . . . . . . .  B  ADDR  008BH  NOT USED
@@ -204,17 +261,17 @@ IT1. . . . . . . . . . . . . . . . .  B  ADDR  008AH  NOT USED
 KBE. . . . . . . . . . . . . . . . .  D  ADDR  009DH  NOT USED
 KBF. . . . . . . . . . . . . . . . .  D  ADDR  009EH  NOT USED
 KBLS . . . . . . . . . . . . . . . .  D  ADDR  009CH  NOT USED
-LOOP . . . . . . . . . . . . . . . .  C  ADDR  000CH
-OFF. . . . . . . . . . . . . . . . .  C  ADDR  0003H
-ONE. . . . . . . . . . . . . . . . .  C  ADDR  0023H  NOT USED
+LOOP . . . . . . . . . . . . . . . .  C  ADDR  004CH
+OFF. . . . . . . . . . . . . . . . .  C  ADDR  0043H
+ONE. . . . . . . . . . . . . . . . .  C  ADDR  0063H
 OSCCON . . . . . . . . . . . . . . .  D  ADDR  0086H  NOT USED
 OV . . . . . . . . . . . . . . . . .  B  ADDR  00D2H  NOT USED
-P. . . . . . . . . . . . . . . . . .  B  ADDR  00D0H  NOT USED
+P. . . . . . . . . . . . . . . . . .  B  ADDR  00D0H
 P0 . . . . . . . . . . . . . . . . .  D  ADDR  0080H
 P1 . . . . . . . . . . . . . . . . .  D  ADDR  0090H
 P1M1 . . . . . . . . . . . . . . . .  D  ADDR  00D4H  NOT USED
 P1M2 . . . . . . . . . . . . . . . .  D  ADDR  00E2H  NOT USED
-P2 . . . . . . . . . . . . . . . . .  D  ADDR  00A0H  NOT USED
+P2 . . . . . . . . . . . . . . . . .  D  ADDR  00A0H
 P3 . . . . . . . . . . . . . . . . .  D  ADDR  00B0H  NOT USED
 P3M1 . . . . . . . . . . . . . . . .  D  ADDR  00D5H  NOT USED
 P3M2 . . . . . . . . . . . . . . . .  D  ADDR  00E3H  NOT USED
@@ -258,7 +315,7 @@ SADEN_1. . . . . . . . . . . . . . .  D  ADDR  00BAH  NOT USED
 SBUF . . . . . . . . . . . . . . . .  D  ADDR  0099H  NOT USED
 SCON . . . . . . . . . . . . . . . .  D  ADDR  0098H  NOT USED
 SINT . . . . . . . . . . . . . . . .  C  ADDR  0023H  NOT USED
-SIX. . . . . . . . . . . . . . . . .  C  ADDR  009FH
+SIX. . . . . . . . . . . . . . . . .  C  ADDR  00E7H
 SM0. . . . . . . . . . . . . . . . .  B  ADDR  009FH  NOT USED
 SM1. . . . . . . . . . . . . . . . .  B  ADDR  009EH  NOT USED
 SM2. . . . . . . . . . . . . . . . .  B  ADDR  009DH  NOT USED
@@ -269,7 +326,7 @@ SPDAT. . . . . . . . . . . . . . . .  D  ADDR  00C5H  NOT USED
 SPDR . . . . . . . . . . . . . . . .  D  ADDR  0086H  NOT USED
 SPSR . . . . . . . . . . . . . . . .  D  ADDR  00AAH  NOT USED
 SPSTA. . . . . . . . . . . . . . . .  D  ADDR  00C4H  NOT USED
-START. . . . . . . . . . . . . . . .  C  ADDR  0000H  NOT USED
+START. . . . . . . . . . . . . . . .  C  ADDR  0002H
 T0 . . . . . . . . . . . . . . . . .  B  ADDR  00B4H  NOT USED
 T1 . . . . . . . . . . . . . . . . .  B  ADDR  00B5H  NOT USED
 T2CON. . . . . . . . . . . . . . . .  D  ADDR  00C8H  NOT USED
@@ -283,7 +340,7 @@ TF2. . . . . . . . . . . . . . . . .  B  ADDR  00CFH  NOT USED
 TH0. . . . . . . . . . . . . . . . .  D  ADDR  008CH  NOT USED
 TH1. . . . . . . . . . . . . . . . .  D  ADDR  008DH  NOT USED
 TH2. . . . . . . . . . . . . . . . .  D  ADDR  00CDH  NOT USED
-THREE. . . . . . . . . . . . . . . .  C  ADDR  0053H  NOT USED
+THREE. . . . . . . . . . . . . . . .  C  ADDR  009BH
 TI . . . . . . . . . . . . . . . . .  B  ADDR  0099H  NOT USED
 TIMER0 . . . . . . . . . . . . . . .  C  ADDR  000BH  NOT USED
 TIMER1 . . . . . . . . . . . . . . .  C  ADDR  001BH  NOT USED
@@ -295,10 +352,13 @@ TMOD . . . . . . . . . . . . . . . .  D  ADDR  0089H  NOT USED
 TR0. . . . . . . . . . . . . . . . .  B  ADDR  008CH  NOT USED
 TR1. . . . . . . . . . . . . . . . .  B  ADDR  008EH  NOT USED
 TR2. . . . . . . . . . . . . . . . .  B  ADDR  00CAH  NOT USED
-TWO. . . . . . . . . . . . . . . . .  C  ADDR  0037H  NOT USED
+TWO. . . . . . . . . . . . . . . . .  C  ADDR  007FH
 TXD. . . . . . . . . . . . . . . . .  B  ADDR  00B1H  NOT USED
 WDTCON . . . . . . . . . . . . . . .  D  ADDR  00A7H  NOT USED
 WDTPRG . . . . . . . . . . . . . . .  D  ADDR  00A7H  NOT USED
 WDTRST . . . . . . . . . . . . . . .  D  ADDR  00A6H  NOT USED
 WR . . . . . . . . . . . . . . . . .  B  ADDR  00B6H  NOT USED
-ZERO . . . . . . . . . . . . . . . .  C  ADDR  000FH  NOT USED
+ZERO . . . . . . . . . . . . . . . .  C  ADDR  004FH  NOT USED
+ZUB. . . . . . . . . . . . . . . . .  C  ADDR  0031H
+ZUF8R. . . . . . . . . . . . . . . .  N  NUMB  0020H
+ZUFALL . . . . . . . . . . . . . . .  C  ADDR  002AH  NOT USED
