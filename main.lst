@@ -2,7 +2,7 @@ main                                                                            
                          1     start:
                          2
                          3     generateNumber:
-0000 020023              4     jmp one
+0000 020067              4     jmp four
                          5
                          6     off:
 0003 7580FF              7     mov p0, #0ffh
@@ -22,7 +22,7 @@ main                                                                            
 001A 7590BD             21     mov p1, #10111101b
 001D 1103               22     acall off
 001F 110A               23     acall delay
-                        24     ;acall zero
+                        24     ;jmp zero
 0021 80DD               25     jmp generateNumber
                         26
                         27     one:
@@ -33,14 +33,52 @@ main                                                                            
 002E 7590BD             32     mov p1, #10111101b
 0031 1103               33     acall off
 0033 110A               34     acall delay
-0035 1123               35     acall one
-                        36
+                        35     ;jmp one
+0035 80C9               36     jmp generateNumber
+                        37
+                        38     two:
+0037 7580C3             39     mov p0, #11000011b
+003A 7590B5             40     mov p1, #10110101b
+003D 1103               41     acall off
+003F 7580EF             42     mov p0, #11101111b
+0042 7590F1             43     mov p1, #11110001b
+0045 1103               44     acall off
+0047 7580DF             45     mov p0, #11011111b
+004A 75908F             46     mov p1, #10001111b
+004D 1103               47     acall off
+004F 110A               48     acall delay
+                        49     ;jmp two
+0051 80AD               50     jmp generateNumber
+                        51
+                        52     three:
+0053 7580C3             53     mov p0, #11000011b
+0056 7590B5             54     mov p1, #10110101b
+0059 1103               55     acall off
+005B 7580FB             56     mov p0, #11111011b
+005E 759081             57     mov p1, #10000001b
+0061 1103               58     acall off
+0063 110A               59     acall delay
+                        60     ;jmp three
+0065 8099               61     jmp generateNumber
+                        62
+                        63     four:
+0067 7580DF             64     mov p0, #11011111b
+006A 7590E1             65     mov p1, #11100001b
+006D 1103               66     acall off
+006F 7580E7             67     mov p0, #11100111b
+0072 7590EF             68     mov p1, #11101111b
+0075 1103               69     acall off
+0077 7580FB             70     mov p0, #11111011b
+007A 759081             71     mov p1, #10000001b
+007D 1103               72     acall off
+007F 110A               73     acall delay
+0081 80E4               74     jmp four
 ****WARNING:Missing`END'directive
 ASSEMBLY COMPLETE, NO ERRORS FOUND, 1 WARNING
 
 
 ERROR SUMMARY:
-Line 36, WARNING:Missing`END'directive
+Line 74, WARNING:Missing`END'directive
 
 SYMBOL TABLE:
 ??MCU_8051_IDE . . . . . . . . . . .  N  NUMB  8051H  NOT USED
@@ -118,6 +156,7 @@ EXTI0. . . . . . . . . . . . . . . .  C  ADDR  0003H  NOT USED
 EXTI1. . . . . . . . . . . . . . . .  C  ADDR  0013H  NOT USED
 F0 . . . . . . . . . . . . . . . . .  B  ADDR  00D5H  NOT USED
 FE . . . . . . . . . . . . . . . . .  B  ADDR  009FH  NOT USED
+FOUR . . . . . . . . . . . . . . . .  C  ADDR  0067H
 GENERATENUMBER . . . . . . . . . . .  C  ADDR  0000H
 IE . . . . . . . . . . . . . . . . .  D  ADDR  00A8H  NOT USED
 IE0. . . . . . . . . . . . . . . . .  B  ADDR  0089H  NOT USED
@@ -137,7 +176,7 @@ KBF. . . . . . . . . . . . . . . . .  D  ADDR  009EH  NOT USED
 KBLS . . . . . . . . . . . . . . . .  D  ADDR  009CH  NOT USED
 LOOP . . . . . . . . . . . . . . . .  C  ADDR  000CH
 OFF. . . . . . . . . . . . . . . . .  C  ADDR  0003H
-ONE. . . . . . . . . . . . . . . . .  C  ADDR  0023H
+ONE. . . . . . . . . . . . . . . . .  C  ADDR  0023H  NOT USED
 OSCCON . . . . . . . . . . . . . . .  D  ADDR  0086H  NOT USED
 OV . . . . . . . . . . . . . . . . .  B  ADDR  00D2H  NOT USED
 P. . . . . . . . . . . . . . . . . .  B  ADDR  00D0H  NOT USED
@@ -213,6 +252,7 @@ TF2. . . . . . . . . . . . . . . . .  B  ADDR  00CFH  NOT USED
 TH0. . . . . . . . . . . . . . . . .  D  ADDR  008CH  NOT USED
 TH1. . . . . . . . . . . . . . . . .  D  ADDR  008DH  NOT USED
 TH2. . . . . . . . . . . . . . . . .  D  ADDR  00CDH  NOT USED
+THREE. . . . . . . . . . . . . . . .  C  ADDR  0053H  NOT USED
 TI . . . . . . . . . . . . . . . . .  B  ADDR  0099H  NOT USED
 TIMER0 . . . . . . . . . . . . . . .  C  ADDR  000BH  NOT USED
 TIMER1 . . . . . . . . . . . . . . .  C  ADDR  001BH  NOT USED
@@ -224,6 +264,7 @@ TMOD . . . . . . . . . . . . . . . .  D  ADDR  0089H  NOT USED
 TR0. . . . . . . . . . . . . . . . .  B  ADDR  008CH  NOT USED
 TR1. . . . . . . . . . . . . . . . .  B  ADDR  008EH  NOT USED
 TR2. . . . . . . . . . . . . . . . .  B  ADDR  00CAH  NOT USED
+TWO. . . . . . . . . . . . . . . . .  C  ADDR  0037H  NOT USED
 TXD. . . . . . . . . . . . . . . . .  B  ADDR  00B1H  NOT USED
 WDTCON . . . . . . . . . . . . . . .  D  ADDR  00A7H  NOT USED
 WDTPRG . . . . . . . . . . . . . . .  D  ADDR  00A7H  NOT USED
