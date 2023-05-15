@@ -26,7 +26,7 @@ cjne A, #0100b, biggerThanFour
 jmp four
 
 biggerThanFour:
-cjne A, #011b, biggerThanFive
+cjne A, #0101b, biggerThanFive
 jmp five
 
 biggerThanFive:
